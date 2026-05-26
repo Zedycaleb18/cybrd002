@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Cybrd Alvin — Track Order</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+<script>
+  (function() {
+    const t = localStorage.getItem('cybrd-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { overflow-x: hidden; width: 100%; max-width: 100%; }
+
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'DM Sans', sans-serif; line-height: 1.6;
+  min-height: 100vh; transition: background 0.3s, color 0.3s;
+}
+
+:root, [data-theme="dark"] {
+  --bg: #0a0a0f; --bg2: #111118; --bg3: #1a1a24;
+  --surface: #1e1e2a; --surface2: #252535;
+  --border: #2a2a3a; --border2: #3a3a50;
+  --accent: #00e5a0; --accent2: #00b87a;
+  --accent-dim: rgba(0,229,160,0.1); --accent-glow: rgba(0,229,160,0.15);
+  --text: #f0f0f4; --text2: #9898b0; --text3: #5e5e78;
+  --red: #ff4d6a; --red-dim: rgba(255,77,106,0.12);
+  --blue: #4d9fff; --amber: #ffb84d; --purple: #a78bfa;
+  --nav-bg: rgba(10,10,15,0.95); --card-shadow: 0 16px 40px rgba(0,0,0,0.4);
+  --logo-icon-color: #0a0a0f;
+}
+[data-theme="light"] {
+  --bg: #f4f4f8; --bg2: #ffffff; --bg3: #eaeaf0;
+  --surface: #f0f0f6; --surface2: #e8e8f0;
+  --border: #d8d8e8; --border2: #c0c0d8;
+  --accent: #009966; --accent2: #007a52;
+  --accent-dim: rgba(0,153,102,0.08); --accent-glow: rgba(0,153,102,0.12);
+  --text: #111118; --text2: #4a4a6a; --text3: #9898b0;
+  --red: #d93651; --red-dim: rgba(217,54,81,0.1);
+  --blue: #2377d4; --amber: #c47a00; --purple: #6d4ed4;
+  --nav-bg: rgba(244,244,248,0.95); --card-shadow: 0 16px 40px rgba(0,0,0,0.08);
+  --logo-icon-color: #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--nav-bg); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border); padding: 0 2rem;
+}
+.nav-inner { max-width: 800px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; height: 64px; }
+.logo {
+  font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800;
+  color: var(--text); text-decoration: none; letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 10px;
+}
+.logo img { width: 36px; height: 36px; object-fit: contain; }
+.logo span { color: var(--accent); }
+.nav-back {
+  display: flex; align-items: center; gap: 6px; color: var(--text2);
+  text-decoration: none; font-size: 0.875rem; padding: 6px 12px;
+  border: 1px solid var(--border); border-radius: 6px; transition: all 0.15s; margin-left: auto;
+  white-space: nowrap; flex-shrink: 0;
+}
+.nav-back:hover { color: var(--text); border-color: var(--border2); }
+.nav-back svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+.nav-back-text { display: inline; }
+@media (max-width: 480px) {
+  .nav-back { padding: 8px 10px; gap: 0; }
+  .nav-back-text { display: none; }
+  .nav-back svg { width: 18px; height: 18px; }
+}
+.theme-toggle {
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; cursor: pointer; transition: all 0.2s; color: var(--text2); flex-shrink: 0;
+}
+.theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+.theme-toggle svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+.icon-sun { display: block; } .icon-moon { display: none; }
+[data-theme="light"] .icon-sun { display: none; }
+[data-theme="light"] .icon-moon { display: block; }
+
+/* PAGE */
+.page-wrap { max-width: 800px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+
+/* SEARCH SECTION */
+.search-section {
+  text-align: center; margin-bottom: 3rem;
+  animation: fadeUp 0.4s ease;
+}
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+.search-icon { font-size: 3rem; margin-bottom: 1rem; }
+.search-title { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.4rem; }
+.search-sub { color: var(--text2); font-size: 0.95rem; margin-bottom: 2rem; }
+.track-form {
+  display: flex; gap: 10px; max-width: 520px; margin: 0 auto;
+}
+.track-input {
+  flex: 1; background: var(--bg2); border: 2px solid var(--border2);
+  color: var(--text); font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+  padding: 13px 18px; border-radius: 10px; outline: none; transition: border-color 0.15s;
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.track-input::placeholder { color: var(--text3); font-weight: 400; text-transform: none; letter-spacing: 0; font-family: 'DM Sans', sans-serif; }
+.track-input:focus { border-color: var(--accent); }
+.btn-track {
+  background: var(--accent); color: var(--logo-icon-color);
+  font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 800;
+  padding: 13px 22px; border-radius: 10px; border: none; cursor: pointer;
+  transition: all 0.2s; white-space: nowrap;
+}
+.btn-track:hover { background: var(--accent2); }
+.track-error { color: var(--red); font-size: 0.85rem; margin-top: 10px; min-height: 20px; }
+
+/* ORDER CARD */
+#orderResult { display: none; animation: fadeUp 0.35s ease; }
+#orderResult.visible { display: block; }
+
+.order-header {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 18px;
+  padding: 1.75rem; margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+}
+.order-id-display { font-family: 'Syne', sans-serif; font-size: 0.78rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; }
+.order-id-val { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--text); letter-spacing: 0.02em; }
+.order-date { font-size: 0.78rem; color: var(--text3); }
+
+/* STATUS BADGE */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 14px; border-radius: 100px; font-size: 0.82rem; font-weight: 700;
+  border: 1px solid; white-space: nowrap;
+}
+.status-badge .sb-dot {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+}
+.status-pending  { background: rgba(255,184,77,0.12); border-color: var(--amber); color: var(--amber); }
+.status-pending .sb-dot  { background: var(--amber); animation: pulse 2s infinite; }
+.status-confirmed { background: rgba(77,159,255,0.12); border-color: var(--blue); color: var(--blue); }
+.status-confirmed .sb-dot { background: var(--blue); animation: pulse 2s infinite; }
+.status-processing { background: rgba(167,139,250,0.12); border-color: var(--purple); color: var(--purple); }
+.status-processing .sb-dot { background: var(--purple); animation: pulse 2s infinite; }
+.status-shipped { background: rgba(0,229,160,0.12); border-color: var(--accent); color: var(--accent); }
+.status-shipped .sb-dot { background: var(--accent); animation: pulse 2s infinite; }
+.status-delivered { background: rgba(0,229,160,0.15); border-color: var(--accent); color: var(--accent); }
+.status-delivered .sb-dot { background: var(--accent); }
+.status-cancelled { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+.status-cancelled .sb-dot { background: var(--red); }
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* LAYOUT */
+.order-layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
+@media (max-width: 700px) { .order-layout { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 18px;
+  padding: 1.5rem; margin-bottom: 20px;
+}
+.card-title {
+  font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 800;
+  letter-spacing: -0.01em; margin-bottom: 1.25rem; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; stroke-width: 2; }
+
+/* TRACKING TIMELINE */
+.timeline { display: flex; flex-direction: column; }
+.timeline-step {
+  display: flex; gap: 16px; position: relative;
+}
+.timeline-step:not(:last-child) .tl-line {
+  position: absolute; left: 16px; top: 34px; bottom: 0;
+  width: 2px; background: var(--border);
+}
+.timeline-step.done .tl-line { background: var(--accent); }
+.timeline-step.active .tl-line { background: linear-gradient(to bottom, var(--accent), var(--border)); }
+.tl-icon {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid var(--border); background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; position: relative; z-index: 1; transition: all 0.3s;
+}
+.timeline-step.done .tl-icon { border-color: var(--accent); background: var(--accent-dim); }
+.timeline-step.active .tl-icon { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); }
+.timeline-step.active .tl-icon-inner { filter: brightness(0) invert(0.05); }
+.tl-content { padding-bottom: 28px; flex: 1; }
+.timeline-step:last-child .tl-content { padding-bottom: 0; }
+.tl-label { font-weight: 600; font-size: 0.9rem; color: var(--text3); line-height: 1.3; padding-top: 6px; }
+.timeline-step.done .tl-label { color: var(--text2); }
+.timeline-step.active .tl-label { color: var(--text); }
+.tl-time { font-size: 0.75rem; color: var(--text3); margin-top: 2px; }
+.tl-note { font-size: 0.78rem; color: var(--text2); margin-top: 4px; background: var(--surface); padding: 6px 10px; border-radius: 7px; border-left: 2px solid var(--accent); }
+
+/* ITEMS */
+.order-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.order-item:last-child { border-bottom: none; }
+.item-icon {
+  width: 42px; height: 42px; border-radius: 9px; background: var(--surface);
+  display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+  overflow: hidden;
+}
+.item-icon img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+.item-name { font-size: 0.88rem; font-weight: 500; color: var(--text); line-height: 1.3; }
+.item-meta { font-size: 0.73rem; color: var(--text3); }
+.item-price { margin-left: auto; font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--accent); white-space: nowrap; }
+
+/* DETAILS */
+.details-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+.details-row:last-child { border-bottom: none; }
+.details-label { color: var(--text3); flex-shrink: 0; }
+.details-val { color: var(--text); text-align: right; font-weight: 500; }
+.details-val.accent { color: var(--accent); font-weight: 700; font-family: 'Syne', sans-serif; }
+
+/* CONTACT BTN */
+.btn-contact {
+  width: 100%; margin-top: 1rem;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: #25d366; color: #fff;
+  font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700;
+  padding: 12px; border-radius: 10px; text-decoration: none; transition: all 0.2s;
+}
+.btn-contact:hover { opacity: 0.9; }
+.btn-contact svg { width: 18px; height: 18px; fill: currentColor; }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  nav { padding: 0 1rem; }
+  .nav-inner { height: 60px; gap: 0.75rem; }
+  .nav-back span { display: none; }
+  .nav-back { padding: 6px 10px; }
+  .page-wrap { padding: 1.5rem 1rem 4rem; }
+  .track-form { flex-direction: column; }
+  .track-input { font-size: 0.9rem; }
+  .btn-track { width: 100%; }
+  .order-header { flex-direction: column; gap: 10px; align-items: flex-start; }
+  .search-title { font-size: 1.5rem; }
+  .card { padding: 1.25rem; }
+  .details-row { flex-direction: column; gap: 2px; }
+  .details-val { text-align: left; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <img src="https://i.imgur.com/61ppX1T.png" alt="Logo">
+      Cybrd<span>_Alvin</span>
+    </a>
+    <a href="index.html" class="nav-back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      <span class="nav-back-text">Back to Store</span>
+    </a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="page-wrap">
+
+  <!-- SEARCH SECTION -->
+  <div class="search-section">
+    <div class="search-icon">📦</div>
+    <h1 class="search-title">Track Your Order</h1>
+    <p class="search-sub">Enter your Order ID to see the latest status of your delivery.</p>
+    <div class="track-form">
+      <input type="text" class="track-input" id="trackInput" placeholder="e.g. CYB-ABC123-XY12" maxlength="32">
+      <button class="btn-track" id="btnTrack">Track</button>
+    </div>
+    <div class="track-error" id="trackError"></div>
+  </div>
+
+  <!-- ORDER RESULT -->
+  <div id="orderResult">
+
+    <div class="order-header">
+      <div>
+        <div class="order-id-display">Order ID</div>
+        <div class="order-id-val" id="dispOrderId">—</div>
+        <div class="order-date" id="dispDate"></div>
+      </div>
+      <div id="dispStatusBadge"></div>
+    </div>
+
+    <div class="order-layout">
+
+      <!-- LEFT -->
+      <div>
+        <!-- TIMELINE -->
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Order Timeline
+          </div>
+          <div class="timeline" id="timeline"></div>
+        </div>
+
+        <!-- ITEMS -->
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            Items Ordered
+          </div>
+          <div id="orderItems"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+            <span style="font-weight:600;font-size:0.9rem;">Total</span>
+            <span style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--accent);" id="dispTotal"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div>
+        <!-- ORDER DETAILS -->
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Delivery Details
+          </div>
+          <div id="dispDetails"></div>
+        </div>
+
+        <!-- PAYMENT -->
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            Payment Info
+          </div>
+          <div id="dispPayment"></div>
+        </div>
+
+        <!-- HELP -->
+        <div class="card">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Need Help?
+          </div>
+          <p style="font-size:0.85rem;color:var(--text2);margin-bottom:0.75rem;">Have a question about your order? Chat with us directly on WhatsApp.</p>
+          <a class="btn-contact" id="waLink" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.277-.582c.918.475 1.849.698 2.943.699h.002c3.18 0 5.768-2.586 5.768-5.766 0-3.18-2.588-5.766-5.768-5.766v.001zm.006 10.309h-.003c-.908 0-1.782-.225-2.544-.633l-.177-.099-1.362.348.362-1.323-.115-.183c-.48-.725-.753-1.558-.753-2.434 0-2.497 2.032-4.529 4.531-4.529 2.499 0 4.529 2.032 4.529 4.529 0 2.496-2.031 4.528-4.528 4.528zm2.478-3.279c-.135-.067-.799-.394-.923-.439-.124-.045-.214-.067-.304.067-.09.134-.349.439-.428.529-.079.09-.158.101-.293.034-.135-.067-.57-.21-1.085-.67-.4-.358-.67-.8-.748-.935-.079-.135-.008-.208.059-.275.06-.06.135-.157.202-.235.067-.079.09-.135.135-.225.045-.09.022-.169-.011-.236-.034-.067-.303-.73-.415-1-.109-.266-.221-.217-.304-.221-.079-.004-.169-.004-.259-.004-.09 0-.236.034-.36.168-.124.135-.473.461-.473 1.125 0 .663.483 1.303.551 1.393.067.09.951 1.453 2.305 2.037.322.139.574.222.77.284.324.102.619.088.852.053.26-.039.799-.326.911-.642.112-.315.112-.585.079-.641-.034-.056-.124-.09-.259-.157z"/></svg>
+            Chat on WhatsApp
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════
+//  DATA
+// ══════════════════════════
+const ORDERS_KEY = 'cybrd_orders_v1';
+const WA_NUMBER  = '254706169541';
+
+function loadOrders() {
+  try { return JSON.parse(localStorage.getItem(ORDERS_KEY)) || []; } catch { return []; }
+}
+function escHtml(str) {
+  return String(str||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// ── STATUS CONFIG ──
+const STATUS_CONFIG = {
+  pending:    { label: 'Order Received',  emoji: '🕐', class: 'status-pending',    tlLabel: 'Order Received',    description: 'We have received your order and will confirm shortly.' },
+  confirmed:  { label: 'Confirmed',       emoji: '✅', class: 'status-confirmed',  tlLabel: 'Order Confirmed',   description: 'Your order has been confirmed and is being prepared.' },
+  processing: { label: 'Processing',      emoji: '⚙️', class: 'status-processing', tlLabel: 'Processing',        description: 'Your order is being processed and packed.' },
+  shipped:    { label: 'Out for Delivery',emoji: '🚚', class: 'status-shipped',    tlLabel: 'Out for Delivery',  description: 'Your order is on its way to you!' },
+  delivered:  { label: 'Delivered',       emoji: '🎉', class: 'status-delivered',  tlLabel: 'Delivered',         description: 'Your order has been delivered successfully.' },
+  cancelled:  { label: 'Cancelled',       emoji: '❌', class: 'status-cancelled',  tlLabel: 'Cancelled',         description: 'This order has been cancelled.' },
+};
+
+const STATUS_ORDER = ['pending','confirmed','processing','shipped','delivered'];
+
+// ── PAYMENT LABELS ──
+const PAY_LABELS = {
+  mpesa: '📱 M-Pesa',
+  bank:  '🏦 Bank Transfer',
+  cod:   '🤝 Pay on Delivery',
+};
+
+// ── FORMAT DATE ──
+function fmtDate(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  return d.toLocaleDateString('en-KE', { day:'numeric', month:'short', year:'numeric' }) + ', ' +
+         d.toLocaleTimeString('en-KE', { hour:'2-digit', minute:'2-digit' });
+}
+
+// ── TRACK ──
+function trackOrder(rawId) {
+  const id = rawId.trim().toUpperCase();
+  document.getElementById('trackError').textContent = '';
+  if (!id) { document.getElementById('trackError').textContent = 'Please enter an Order ID.'; return; }
+
+  const orders = loadOrders();
+  const order  = orders.find(o => o.id.toUpperCase() === id);
+
+  if (!order) {
+    document.getElementById('trackError').textContent = `No order found with ID "${id}". Please check and try again.`;
+    document.getElementById('orderResult').classList.remove('visible');
+    return;
+  }
+
+  renderOrder(order);
+  document.getElementById('orderResult').classList.add('visible');
+  document.getElementById('orderResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderOrder(order) {
+  const sc = STATUS_CONFIG[order.status] || STATUS_CONFIG.pending;
+
+  // Header
+  document.getElementById('dispOrderId').textContent = order.id;
+  document.getElementById('dispDate').textContent    = 'Placed: ' + fmtDate(order.createdAt);
+  document.getElementById('dispStatusBadge').innerHTML =
+    `<div class="status-badge ${sc.class}"><span class="sb-dot"></span>${sc.label}</div>`;
+
+  // Timeline
+  const isCancelled = order.status === 'cancelled';
+  const currentIdx  = isCancelled ? -1 : STATUS_ORDER.indexOf(order.status);
+  const timelineEl  = document.getElementById('timeline');
+
+  if (isCancelled) {
+    const hist = (order.statusHistory||[]).find(h => h.status === 'cancelled');
+    timelineEl.innerHTML = `
+      <div class="timeline-step active">
+        <div class="tl-icon"><span class="tl-icon-inner">❌</span></div>
+        <div class="tl-content">
+          <div class="tl-label">Order Cancelled</div>
+          <div class="tl-time">${hist ? fmtDate(hist.time) : ''}</div>
+          ${hist?.note ? `<div class="tl-note">${escHtml(hist.note)}</div>` : ''}
+        </div>
+      </div>`;
+  } else {
+    const stepsHtml = STATUS_ORDER.map((s, idx) => {
+      const cfg   = STATUS_CONFIG[s];
+      const done  = idx < currentIdx;
+      const active = idx === currentIdx;
+      const hist  = (order.statusHistory||[]).slice().reverse().find(h => h.status === s);
+      return `
+        <div class="timeline-step ${done ? 'done' : ''} ${active ? 'active' : ''}">
+          <div class="tl-line"></div>
+          <div class="tl-icon"><span class="tl-icon-inner">${done ? '✓' : cfg.emoji}</span></div>
+          <div class="tl-content">
+            <div class="tl-label">${cfg.tlLabel}</div>
+            ${hist ? `<div class="tl-time">${fmtDate(hist.time)}</div>` : ''}
+            ${active ? `<div class="tl-note">${escHtml(cfg.description)}${hist?.note ? ' — ' + escHtml(hist.note) : ''}</div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+    timelineEl.innerHTML = stepsHtml;
+  }
+
+  // Items
+  const itemsEl = document.getElementById('orderItems');
+  itemsEl.innerHTML = (order.items||[]).map(item => {
+    const price = parseFloat(String(item.price).replace(/,/g,'')) || 0;
+    const total = price * (item.qty || 1);
+    const iconHtml = item.icon && item.icon.startsWith('data:')
+      ? `<img src="${item.icon}" alt="">`
+      : (item.icon || '📦');
+    return `
+      <div class="order-item">
+        <div class="item-icon">${iconHtml}</div>
+        <div>
+          <div class="item-name">${escHtml(item.name)}</div>
+          <div class="item-meta">${escHtml(item.brand||'')}${item.qty > 1 ? ` × ${item.qty}` : ''}</div>
+        </div>
+        <div class="item-price">KSh ${total.toLocaleString()}</div>
+      </div>`;
+  }).join('');
+  document.getElementById('dispTotal').textContent = 'KSh ' + (order.total||0).toLocaleString();
+
+  // Details
+  const c = order.customer || {};
+  document.getElementById('dispDetails').innerHTML = `
+    <div class="details-row"><span class="details-label">Name</span><span class="details-val">${escHtml(c.name||'—')}</span></div>
+    <div class="details-row"><span class="details-label">Phone</span><span class="details-val">${escHtml(c.phone||'—')}</span></div>
+    ${c.email ? `<div class="details-row"><span class="details-label">Email</span><span class="details-val">${escHtml(c.email)}</span></div>` : ''}
+    <div class="details-row"><span class="details-label">Address</span><span class="details-val">${escHtml(c.address||'—')}</span></div>
+    ${c.notes ? `<div class="details-row"><span class="details-label">Notes</span><span class="details-val">${escHtml(c.notes)}</span></div>` : ''}`;
+
+  // Payment
+  const p = order.payment || {};
+  const payLabel = PAY_LABELS[p.method] || p.method || '—';
+  document.getElementById('dispPayment').innerHTML = `
+    <div class="details-row"><span class="details-label">Method</span><span class="details-val">${escHtml(payLabel)}</span></div>
+    ${p.mpesaCode ? `<div class="details-row"><span class="details-label">M-Pesa Code</span><span class="details-val accent">${escHtml(p.mpesaCode)}</span></div>` : ''}
+    ${p.bankRef   ? `<div class="details-row"><span class="details-label">Bank Ref</span><span class="details-val accent">${escHtml(p.bankRef)}</span></div>` : ''}
+    <div class="details-row"><span class="details-label">Total</span><span class="details-val accent">KSh ${(order.total||0).toLocaleString()}</span></div>`;
+
+  // WhatsApp link
+  const waText = encodeURIComponent(`Hi Cybrd Alvin! I have a question about my order.\n\nOrder ID: ${order.id}\nStatus: ${sc.label}\n\nPlease assist. Thank you!`);
+  document.getElementById('waLink').href = `https://wa.me/${WA_NUMBER}?text=${waText}`;
+}
+
+// ── EVENTS ──
+document.getElementById('btnTrack').addEventListener('click', () => {
+  trackOrder(document.getElementById('trackInput').value);
+});
+document.getElementById('trackInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') trackOrder(document.getElementById('trackInput').value);
+});
+
+// ── AUTO-LOAD FROM URL ──
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id') || params.get('order');
+  if (id) {
+    document.getElementById('trackInput').value = id;
+    trackOrder(id);
+  }
+})();
+
+// ── THEME ──
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('cybrd-theme', next);
+});
+</script>
+</body>
+</html>
