@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Cybrd Alvin — Product Catalog</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+<script>
+  (function() {
+    const t = localStorage.getItem('cybrd-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { overflow-x: hidden; width: 100%; max-width: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+
+:root, [data-theme="dark"] {
+  --bg: #0a0a0f; --bg2: #111118; --bg3: #1a1a24;
+  --surface: #1e1e2a; --surface2: #252535;
+  --border: #2a2a3a; --border2: #3a3a50;
+  --accent: #00e5a0; --accent2: #00b87a;
+  --accent-dim: rgba(0,229,160,0.1); --accent-glow: rgba(0,229,160,0.15);
+  --text: #f0f0f4; --text2: #9898b0; --text3: #5e5e78;
+  --red: #ff4d6a; --blue: #4d9fff; --amber: #ffb84d; --purple: #a78bfa;
+  --nav-bg: rgba(10,10,15,0.92); --card-shadow: 0 16px 40px rgba(0,0,0,0.4);
+  --logo-icon-color: #0a0a0f;
+}
+[data-theme="light"] {
+  --bg: #f4f4f8; --bg2: #ffffff; --bg3: #eaeaf0;
+  --surface: #f0f0f6; --surface2: #e8e8f0;
+  --border: #d8d8e8; --border2: #c0c0d8;
+  --accent: #009966; --accent2: #007a52;
+  --accent-dim: rgba(0,153,102,0.08); --accent-glow: rgba(0,153,102,0.12);
+  --text: #111118; --text2: #4a4a6a; --text3: #9898b0;
+  --red: #d93651; --blue: #2377d4; --amber: #c47a00; --purple: #6d4ed4;
+  --nav-bg: rgba(244,244,248,0.92); --card-shadow: 0 16px 40px rgba(0,0,0,0.08);
+  --logo-icon-color: #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--nav-bg); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border); padding: 0 2rem;
+  transition: background 0.3s, border-color 0.3s;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; gap: 1.5rem; height: 64px;
+}
+.logo {
+  font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800;
+  color: var(--text); text-decoration: none; letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 10px;
+}
+.logo span { color: var(--accent); }
+.logo-img { width: 36px; height: 36px; object-fit: contain; }
+.nav-back {
+  display: flex; align-items: center; gap: 6px; color: var(--text2);
+  text-decoration: none; font-size: 0.875rem; padding: 6px 12px;
+  border: 1px solid var(--border); border-radius: 6px;
+  transition: all 0.15s; margin-left: auto;
+}
+.nav-back:hover { color: var(--text); border-color: var(--border2); }
+.nav-back svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+.theme-toggle {
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; cursor: pointer; transition: all 0.2s; color: var(--text2); flex-shrink: 0;
+}
+.theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+.theme-toggle svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+.icon-sun { display: block; }
+.icon-moon { display: none; }
+[data-theme="light"] .icon-sun { display: none; }
+[data-theme="light"] .icon-moon { display: block; }
+
+/* ── PAGE HEADER ── */
+.page-header { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem 2rem; }
+.breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.78rem; color: var(--text3); margin-bottom: 1.5rem;
+}
+.breadcrumb a { color: var(--text3); text-decoration: none; }
+.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb span { color: var(--accent); }
+.page-title { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.4rem; }
+.page-subtitle { color: var(--text2); font-size: 0.95rem; }
+
+/* ── CATEGORY TABS ── */
+.cat-tabs-wrap {
+  max-width: 1200px; margin: 0 auto; padding: 0 2rem 1.5rem;
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+}
+.cat-tab {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 18px; border-radius: 100px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text2); font-size: 0.85rem; font-weight: 500;
+  cursor: pointer; transition: all 0.18s; text-decoration: none;
+}
+.cat-tab:hover { border-color: var(--border2); color: var(--text); }
+.cat-tab.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.cat-tab .tab-icon { font-size: 1rem; }
+.cat-tab .tab-count {
+  background: var(--surface2); color: var(--text3);
+  font-size: 0.7rem; font-weight: 700; padding: 1px 7px; border-radius: 100px; min-width: 20px; text-align: center;
+}
+.cat-tab.active .tab-count { background: var(--accent); color: var(--logo-icon-color); }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  max-width: 1200px; margin: 0 auto; padding: 0 2rem 1.5rem;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.search-wrap { flex: 1; min-width: 200px; max-width: 360px; position: relative; }
+.search-wrap svg {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; stroke: var(--text3); fill: none; stroke-width: 2; pointer-events: none;
+}
+.search-input {
+  width: 100%; background: var(--surface); border: 1px solid var(--border);
+  color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+  padding: 9px 12px 9px 38px; border-radius: 8px; outline: none; transition: border-color 0.15s;
+}
+.search-input::placeholder { color: var(--text3); }
+.search-input:focus { border-color: var(--accent); }
+.toolbar-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.sort-select {
+  background: var(--surface); border: 1px solid var(--border); color: var(--text2);
+  font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+  padding: 8px 12px; border-radius: 8px; outline: none; cursor: pointer;
+}
+.sort-select:focus { border-color: var(--accent); }
+
+/* ── PRODUCTS GRID ── */
+.catalog-wrap { max-width: 1200px; margin: 0 auto; padding: 0 2rem 4rem; }
+.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+.product-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 16px;
+  overflow: hidden; transition: all 0.2s; position: relative;
+}
+.product-card:hover { border-color: var(--border2); box-shadow: var(--card-shadow); }
+.product-img-wrap {
+  height: 200px; background: var(--surface);
+  display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+}
+.product-img-wrap img { width: 100%; height: 100%; object-fit: contain; padding: 12px; transition: transform 0.3s ease; }
+.product-card:hover .product-img-wrap img { transform: scale(1.04); }
+.product-img-wrap .placeholder-icon { font-size: 4rem; opacity: 0.3; }
+.product-badges { position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 4px; }
+.badge-save { background: var(--red); color: #fff; font-size: 0.66rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+.badge-new  { background: var(--blue); color: #fff; font-size: 0.66rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+.badge-stock { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); color: #fff; font-size: 0.65rem; font-weight: 600; padding: 3px 8px; border-radius: 4px; }
+.badge-stock.out { background: rgba(255,77,106,0.8); }
+.product-body { padding: 1rem 1rem 0.75rem; }
+.product-brand { font-size: 0.68rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 3px; }
+.product-name { font-size: 0.92rem; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.35; }
+.product-specs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+.spec-pill { background: var(--surface); color: var(--text2); font-size: 0.67rem; padding: 2px 8px; border-radius: 4px; }
+.product-price-row { display: flex; align-items: baseline; gap: 8px; padding-bottom: 0.5rem; }
+.price-new { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--accent); }
+.price-old { font-size: 0.8rem; color: var(--text3); text-decoration: line-through; }
+.product-order-btn {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%; background: #25D366; color: #fff;
+  font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700;
+  padding: 9px; border-radius: 0 0 14px 14px;
+  border: none; cursor: pointer; text-decoration: none; transition: all 0.2s;
+}
+.product-order-btn:hover { background: #1ebe5a; }
+.product-order-btn svg { width: 15px; height: 15px; fill: #fff; flex-shrink: 0; }
+.product-order-btn.out-of-stock { background: var(--surface2); color: var(--text3); cursor: not-allowed; pointer-events: none; }
+
+/* Empty state */
+.empty-state {
+  grid-column: 1/-1; text-align: center; padding: 5rem 2rem;
+  display: flex; flex-direction: column; align-items: center; gap: 1rem;
+}
+.empty-state .empty-icon { font-size: 4rem; opacity: 0.3; }
+.empty-state h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--text2); }
+.empty-state p { font-size: 0.875rem; color: var(--text3); max-width: 320px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .page-title { font-size: 1.6rem; }
+  .products-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+  .product-img-wrap { height: 160px; }
+  .cat-tabs-wrap { padding: 0 1rem 1.25rem; }
+  .page-header, .catalog-wrap, .toolbar { padding-left: 1rem; padding-right: 1rem; }
+}
+@media (max-width: 420px) {
+  .products-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <img src="https://i.imgur.com/61ppX1T.png" alt="Logo" class="logo-img">
+      Cybrd<span>_alvin</span>
+    </a>
+    <a href="index.html" class="nav-back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Store
+    </a>
+    <button class="theme-toggle" id="themeToggle">
+      <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> › <span id="breadcrumbCat">All Products</span>
+  </div>
+  <h1 class="page-title" id="pageTitle">Product Catalog</h1>
+  <p class="page-subtitle">Browse our full range of devices and accessories.</p>
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="cat-tabs-wrap" id="catTabs">
+  <a class="cat-tab active" data-cat="all" href="#"><span class="tab-icon">🗂️</span> All <span class="tab-count" id="cnt-all">0</span></a>
+  <a class="cat-tab" data-cat="laptops" href="#"><span class="tab-icon">💻</span> Laptops <span class="tab-count" id="cnt-laptops">0</span></a>
+  <a class="cat-tab" data-cat="phones" href="#"><span class="tab-icon">📱</span> Phones <span class="tab-count" id="cnt-phones">0</span></a>
+  <a class="cat-tab" data-cat="printers" href="#"><span class="tab-icon">🖨️</span> Printers <span class="tab-count" id="cnt-printers">0</span></a>
+  <a class="cat-tab" data-cat="cctv" href="#"><span class="tab-icon">📷</span> CCTV <span class="tab-count" id="cnt-cctv">0</span></a>
+  <a class="cat-tab" data-cat="networking" href="#"><span class="tab-icon">🌐</span> Networking <span class="tab-count" id="cnt-networking">0</span></a>
+  <a class="cat-tab" data-cat="accessories" href="#"><span class="tab-icon">🖱️</span> Accessories <span class="tab-count" id="cnt-accessories">0</span></a>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="search-input" id="searchInput" type="text" placeholder="Search products…">
+  </div>
+  <div class="toolbar-right">
+    <select class="sort-select" id="sortSelect">
+      <option value="newest">Newest first</option>
+      <option value="name">Name A–Z</option>
+      <option value="price-asc">Price: Low–High</option>
+      <option value="price-desc">Price: High–Low</option>
+    </select>
+  </div>
+</div>
+
+<!-- PRODUCTS GRID -->
+<div class="catalog-wrap">
+  <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<script>
+// ══════════════════════
+//  CONFIG
+// ══════════════════════
+const STORE_KEY = 'cybrd_catalog_v1';
+const WA_NUMBER = '254706169541';
+
+const CATS = {
+  all:         { label: 'All Products',        icon: '🗂️' },
+  laptops:     { label: 'Laptops & Computers', icon: '💻' },
+  phones:      { label: 'Phones & Tablets',    icon: '📱' },
+  printers:    { label: 'Printers & Scanners', icon: '🖨️' },
+  cctv:        { label: 'CCTV & Security',     icon: '📷' },
+  networking:  { label: 'Networking',          icon: '🌐' },
+  accessories: { label: 'Accessories',         icon: '🖱️' },
+};
+
+let products   = [];
+let currentCat = 'all';
+
+function load() {
+  try { products = JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+  catch { products = []; }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+}
+
+// ── COUNTS ──
+function updateCounts() {
+  const counts = {};
+  Object.keys(CATS).forEach(k => counts[k] = 0);
+  products.forEach(p => {
+    counts.all++;
+    if (counts[p.category] !== undefined) counts[p.category]++;
+    else counts[p.category] = 1;
+  });
+  Object.keys(CATS).forEach(k => {
+    const el = document.getElementById('cnt-' + k);
+    if (el) el.textContent = counts[k] || 0;
+  });
+}
+
+// ── PAGE HEADER ──
+function updatePageHeader() {
+  const meta = CATS[currentCat] || CATS.all;
+  const breadcrumb = document.getElementById('breadcrumbCat');
+  const pageTitle  = document.getElementById('pageTitle');
+  if (breadcrumb) breadcrumb.textContent = meta.label;
+  if (pageTitle)  pageTitle.textContent  = currentCat === 'all' ? 'Product Catalog' : meta.icon + ' ' + meta.label;
+  document.title = 'Cybrd Alvin — ' + meta.label;
+}
+
+// ── FILTER / SORT ──
+function getFiltered() {
+  const q    = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+  const sort = document.getElementById('sortSelect')?.value || 'newest';
+  let list   = currentCat === 'all' ? [...products] : products.filter(p => p.category === currentCat);
+  if (q) list = list.filter(p =>
+    p.name.toLowerCase().includes(q) ||
+    (p.brand||'').toLowerCase().includes(q) ||
+    (p.desc||'').toLowerCase().includes(q) ||
+    (p.specs||[]).some(s => s.toLowerCase().includes(q))
+  );
+  if (sort === 'name')       list.sort((a,b) => a.name.localeCompare(b.name));
+  if (sort === 'price-asc')  list.sort((a,b) => a.price - b.price);
+  if (sort === 'price-desc') list.sort((a,b) => b.price - a.price);
+  if (sort === 'newest')     list.reverse();
+  return list;
+}
+
+// ── RENDER GRID ──
+function renderGrid() {
+  const grid = document.getElementById('productsGrid');
+  if (!grid) return;
+  const list = getFiltered();
+
+  if (!list.length) {
+    const isSearch = (document.getElementById('searchInput')?.value || '').trim();
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">${isSearch ? '🔍' : (CATS[currentCat]?.icon || '📦')}</div>
+        <h3>${isSearch ? 'No results found' : 'No products yet'}</h3>
+        <p>${isSearch ? 'Try a different search term.' : 'No products available in this category yet.'}</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(p => {
+    const imgHtml = p.images && p.images.length
+      ? `<img src="${p.images[0]}" alt="${escapeHtml(p.name)}" loading="lazy">`
+      : `<div class="placeholder-icon">${CATS[p.category]?.icon || '📦'}</div>`;
+    const badges = [
+      p.badge === 'new'  ? '<span class="badge-new">NEW</span>'     : '',
+      p.badge === 'save' ? '<span class="badge-save">SAVE</span>'   : '',
+      p.badge === 'hot'  ? '<span class="badge-save">HOT 🔥</span>' : '',
+    ].join('');
+    const stockLabel = p.stock === 'out' ? 'Out of Stock' : p.stock === 'low' ? 'Low Stock' : '';
+    const stockHtml  = stockLabel ? `<span class="badge-stock ${p.stock === 'out' ? 'out' : ''}">${stockLabel}</span>` : '';
+    const specsHtml  = (p.specs||[]).map(s => `<span class="spec-pill">${escapeHtml(s)}</span>`).join('');
+    const oldPrice   = p.oldPrice ? `<span class="price-old">KSh ${Number(p.oldPrice).toLocaleString()}</span>` : '';
+    const isOut      = p.stock === 'out';
+    const waText     = encodeURIComponent(`Hello Cybrd Alvin! I'd like to order:\n\n• ${p.brand ? p.brand + ' ' : ''}${p.name} — KSh ${Number(p.price).toLocaleString()}\n\nPlease confirm availability. Thank you!`);
+    return `
+    <div class="product-card" data-id="${p.id}">
+      <div class="product-img-wrap">
+        ${imgHtml}
+        <div class="product-badges">${badges}</div>
+        ${stockHtml}
+      </div>
+      <div class="product-body">
+        <div class="product-brand">${escapeHtml(p.brand || '')}</div>
+        <div class="product-name">${escapeHtml(p.name)}</div>
+        ${specsHtml ? `<div class="product-specs">${specsHtml}</div>` : ''}
+        <div class="product-price-row">
+          <span class="price-new">KSh ${Number(p.price).toLocaleString()}</span>
+          ${oldPrice}
+        </div>
+      </div>
+      <a class="product-order-btn${isOut ? ' out-of-stock' : ''}"
+         ${isOut ? '' : `href="https://wa.me/${WA_NUMBER}?text=${waText}" target="_blank" rel="noopener"`}>
+        <svg viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.277-.582c.918.475 1.849.698 2.943.699h.002c3.18 0 5.768-2.586 5.768-5.766 0-3.18-2.588-5.766-5.768-5.766v.001zm.006 10.309h-.003c-.908 0-1.782-.225-2.544-.633l-.177-.099-1.362.348.362-1.323-.115-.183c-.48-.725-.753-1.558-.753-2.434 0-2.497 2.032-4.529 4.531-4.529 2.499 0 4.529 2.032 4.529 4.529 0 2.496-2.031 4.528-4.528 4.528zm2.478-3.279c-.135-.067-.799-.394-.923-.439-.124-.045-.214-.067-.304.067-.09.134-.349.439-.428.529-.079.09-.158.101-.293.034-.135-.067-.57-.21-1.085-.67-.4-.358-.67-.8-.748-.935-.079-.135-.008-.208.059-.275.06-.06.135-.157.202-.235.067-.079.09-.135.135-.225.045-.09.022-.169-.011-.236-.034-.067-.303-.73-.415-1-.109-.266-.221-.217-.304-.221-.079-.004-.169-.004-.259-.004-.09 0-.236.034-.36.168-.124.135-.473.461-.473 1.125 0 .663.483 1.303.551 1.393.067.09.951 1.453 2.305 2.037.322.139.574.222.77.284.324.102.619.088.852.053.26-.039.799-.326.911-.642.112-.315.112-.585.079-.641-.034-.056-.124-.09-.259-.157z"/></svg>
+        ${isOut ? 'Out of Stock' : 'Order via WhatsApp'}
+      </a>
+    </div>`;
+  }).join('');
+}
+
+function render() {
+  updateCounts();
+  updatePageHeader();
+  renderGrid();
+}
+
+// ── TABS ──
+document.querySelectorAll('.cat-tab').forEach(tab => {
+  tab.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentCat = tab.dataset.cat;
+    document.getElementById('searchInput').value = '';
+    render();
+  });
+});
+
+// ── SEARCH / SORT ──
+document.getElementById('searchInput')?.addEventListener('input', renderGrid);
+document.getElementById('sortSelect')?.addEventListener('change', renderGrid);
+
+// ── URL PARAMS ──
+function applyUrlCategory() {
+  const cat = new URLSearchParams(window.location.search).get('cat');
+  if (cat && CATS[cat]) {
+    currentCat = cat;
+    document.querySelectorAll('.cat-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.cat === cat);
+    });
+  }
+}
+
+// ── THEME ──
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('cybrd-theme', next);
+});
+
+// ── INIT ──
+load();
+applyUrlCategory();
+render();
+</script>
+</body>
+</html>
